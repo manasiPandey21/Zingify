@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "585633289161",
+    "project_id": "zingify-17fc0",
+    "storage_bucket": "zingify-17fc0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:585633289161:android:a018e946449e048b8fce18",
+        "android_client_info": {
+          "package_name": "com.example.zingify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "585633289161-8moksltc5lq96q6ug35skdu46722igbe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhwVqcSHWAuNTsaOJX8276oqdNtrcAy3Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "585633289161-8moksltc5lq96q6ug35skdu46722igbe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

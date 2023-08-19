@@ -1,40 +1,31 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:zingify/screens/dashboard.dart';
-import 'package:zingify/screens/login.dart';
-import 'package:zingify/screens/signup.dart';
-import 'package:zingify/screens/splash.dart';
-import 'package:zingify/screens/welcome.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zingify/screens/authChecker.dart';
+import 'package:zingify/screens/errorpage.dart';
+import 'package:zingify/screens/loading.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+final firebaseInitializerProvider = FutureProvider<FirebaseApp>((ref) async {
+  return await Firebase.initializeApp();
+});
 
+class MyApp extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    // Create a custom MaterialColor based on your desired color
-    MaterialColor zingifyColor = MaterialColor(0xFFFF528C, {
-      50: Color(0xFFFF528C),
-      100: Color(0xFFFF528C),
-      200: Color(0xFFFF528C),
-      300: Color(0xFFFF528C),
-      400: Color(0xFFFF528C),
-      500: Color(0xFFFF528C),
-      600: Color(0xFFFF528C),
-      700: Color(0xFFFF528C),
-      800: Color(0xFFFF528C),
-      900: Color(0xFFFF528C),
-    });
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    final initialize = ref.watch(firebaseInitializerProvider);
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Zingify',
-      theme: ThemeData(
-        primarySwatch: zingifyColor, // Use the custom MaterialColor
-      ),
-      home: DashBoard(),
-    );
+        debugShowCheckedModeBanner: false,
+        home: initialize.when(
+          data: (data) {
+            return AuthChecker();
+          },
+          error: (error, stackTrace) => ErrorScreen(error,stackTrace),
+          loading: () => LoadingScreen(),
+        ));
   }
 }
