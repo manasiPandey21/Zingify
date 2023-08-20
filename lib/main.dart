@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zingify/screens/authChecker.dart';
 import 'package:zingify/screens/errorpage.dart';
 import 'package:zingify/screens/loading.dart';
+import 'package:zingify/screens/profile.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,9 +23,10 @@ class MyApp extends ConsumerWidget {
         debugShowCheckedModeBanner: false,
         home: initialize.when(
           data: (data) {
-            return AuthChecker();
+             return AuthChecker();
+           
           },
-          error: (error, stackTrace) => ErrorScreen(error,stackTrace),
+          error: (error, stackTrace) => ErrorScreen(error, stackTrace),
           loading: () => LoadingScreen(),
         ));
   }
