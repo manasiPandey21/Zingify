@@ -1,7 +1,13 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../config.dart';
 
 final bool isEdit = false;
 
@@ -19,6 +25,20 @@ class _ProfileState extends State<Profile> {
   TextEditingController mobileNo = new TextEditingController();
   TextEditingController interests = new TextEditingController();
   TextEditingController bio = new TextEditingController();
+
+  void createProfileUser() async {
+    var profilebody = {
+      "name": name,
+      "age": age,
+      "bio": bio,
+      "interests": interests,
+      "gender": gender,
+      "mobile": mobileNo
+    };
+    var response = await http.post(Uri.parse(profilecreation),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(profilebody));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +64,11 @@ class _ProfileState extends State<Profile> {
                     ),
                     Text(
                       "Hey! It's Me",
-                     
+
                       // style: GoogleFonts.aboreto(
                       //     fontSize: 50, fontWeight: FontWeight.bold),
-                      style: GoogleFonts.aBeeZee(fontSize: 50, fontWeight: FontWeight.w500),
+                      style: GoogleFonts.aBeeZee(
+                          fontSize: 50, fontWeight: FontWeight.w500),
                     ),
                     SizedBox(
                       height: 20,
@@ -64,7 +85,6 @@ class _ProfileState extends State<Profile> {
                         ],
                       ),
                     ),
-                   
                     SizedBox(
                       height: 50,
                     ),
@@ -125,7 +145,10 @@ class _ProfileState extends State<Profile> {
                                             onPressed: () {},
                                             child: Text("UPDATE"),
                                             style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20)),
                                                 backgroundColor:
                                                     Colors.pinkAccent),
                                           ),
@@ -180,7 +203,6 @@ class _ProfileState extends State<Profile> {
                                               decoration: InputDecoration(
                                                   hintText: "Age",
                                                   border: OutlineInputBorder(
-                                                    
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               20))),
@@ -196,8 +218,10 @@ class _ProfileState extends State<Profile> {
                                             style: ElevatedButton.styleFrom(
                                                 backgroundColor:
                                                     Colors.pinkAccent,
-                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
-                                                    ),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20))),
                                           ),
                                         )
                                       ]),
@@ -263,7 +287,10 @@ class _ProfileState extends State<Profile> {
                                             onPressed: () {},
                                             child: Text("UPDATE"),
                                             style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20)),
                                                 backgroundColor:
                                                     Colors.pinkAccent),
                                           ),
@@ -330,7 +357,10 @@ class _ProfileState extends State<Profile> {
                                             onPressed: () {},
                                             child: Text("UPDATE"),
                                             style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20)),
                                                 backgroundColor:
                                                     Colors.pinkAccent),
                                           ),
@@ -398,7 +428,10 @@ class _ProfileState extends State<Profile> {
                                             onPressed: () {},
                                             child: Text("UPDATE"),
                                             style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20)),
                                                 backgroundColor:
                                                     Colors.pinkAccent),
                                           ),
@@ -465,7 +498,10 @@ class _ProfileState extends State<Profile> {
                                             onPressed: () {},
                                             child: Text("UPDATE"),
                                             style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20)),
                                                 backgroundColor:
                                                     Colors.pinkAccent),
                                           ),
