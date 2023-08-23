@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zingify/screens/authChecker.dart';
 import 'package:zingify/screens/errorpage.dart';
+import 'package:zingify/screens/interests.dart';
 import 'package:zingify/screens/loading.dart';
 import 'package:zingify/screens/profile.dart';
 
@@ -24,7 +25,7 @@ class MyApp extends ConsumerWidget {
         home: initialize.when(
           data: (data) {
             //  return AuthChecker();
-            return Profile();
+            return HobbySelectionWidget();
           },
           error: (error, stackTrace) => ErrorScreen(error, stackTrace),
           loading: () => LoadingScreen(),
