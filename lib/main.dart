@@ -5,6 +5,7 @@ import 'package:zingify/screens/authChecker.dart';
 import 'package:zingify/screens/errorpage.dart';
 import 'package:zingify/screens/interests.dart';
 import 'package:zingify/screens/loading.dart';
+import 'package:zingify/screens/editprofile.dart';
 import 'package:zingify/screens/profile.dart';
 
 void main() {
@@ -25,7 +26,7 @@ class MyApp extends ConsumerWidget {
         home: initialize.when(
           data: (data) {
             //  return AuthChecker();
-            return HobbySelectionWidget();
+            return Profile();
           },
           error: (error, stackTrace) => ErrorScreen(error, stackTrace),
           loading: () => LoadingScreen(),

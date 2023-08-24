@@ -46,6 +46,7 @@ dependencies:
   google_fonts: ^4.0.0
   web_socket_channel: ^2.4.0
   http: ^0.13.6
+  rflutter_alert: ^2.0.7
 
 dependency_overrides:
   firebase_core_platform_interface: 4.5.1  

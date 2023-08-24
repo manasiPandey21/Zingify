@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:zingify/screens/editprofile.dart';
 import 'package:zingify/screens/profile.dart';
 import 'package:zingify/screens/search.dart';
 

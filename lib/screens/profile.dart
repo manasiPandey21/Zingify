@@ -1,566 +1,371 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:google_fonts/google_fonts.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:zingify/screens/editprofile.dart';
+import '../config.dart';
+import '../providers/authprovider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import '../config.dart';
 
-final bool isEdit = false;
+class Profile extends ConsumerWidget {
+  Profile({super.key});
 
-class Profile extends StatefulWidget {
-  const Profile({super.key});
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
-  @override
-  State<Profile> createState() => _ProfileState();
-}
-
-class _ProfileState extends State<Profile> {
   TextEditingController name = new TextEditingController();
+
   TextEditingController age = new TextEditingController();
+
   TextEditingController gender = new TextEditingController();
+
   TextEditingController mobileNo = new TextEditingController();
+
   TextEditingController interests = new TextEditingController();
+
   TextEditingController bio = new TextEditingController();
 
-  void createProfileUser() async {
-    var profilebody = {
-      "name": name,
-      "age": age,
-      "bio": bio,
-      "interests": interests,
-      "gender": gender,
-      "mobile": mobileNo
+  void createProfile() async {
+    var Editprofilebody = {
+      "name": name.text,
+      "age": age.text,
+      "bio": bio.text,
+      "interests": interests.text,
+      "gender": gender.text,
+      "mobile": mobileNo.text
     };
-    var response = await http.post(Uri.parse(profilecreation),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(profilebody));
+    
+ try {
+  var response = await http.post(Uri.parse(profilecreation),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(Editprofilebody));
+  print(response);
+} catch (error) {
+  print("Error sending HTTP request: $error");
+}
+
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              color: Color.fromARGB(255, 238, 227, 231),
-              elevation: 10,
-              //shape:Border.all(color: Colors.pinkAccent),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
-              shadowColor: Colors.grey,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(autheticationProvider);
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+            backgroundColor: Color(0xff212121),
+            body: SafeArea(
+                child: SingleChildScrollView(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
                     SizedBox(
-                      height: 50,
+                      height: 40.0,
+                      width: 150.0,
                     ),
-                    Text(
-                      "Hey! It's Me",
-
-                      // style: GoogleFonts.aboreto(
-                      //     fontSize: 50, fontWeight: FontWeight.bold),
-                      style: GoogleFonts.aBeeZee(
-                          fontSize: 50, fontWeight: FontWeight.w500),
+                    CircleAvatar(
+                      radius: 60.0,
+                      backgroundImage: AssetImage('assets/dating.png'),
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 20.0,
+                      width: 150.0,
                     ),
-                    Center(
-                      child: Stack(
+                    Form(
+                      key: _formKey,
+                      child: SingleChildScrollView(
+                          child: Column(
                         children: [
-                          buildImage(),
-                          Positioned(
-                            bottom: 0,
-                            right: 4,
-                            child: buildEditIcon(Colors.grey),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(25)),
+                            child: TextFormField(
+                              controller: name,
+                              autocorrect: true,
+                              enableSuggestions: true,
+                              keyboardType: TextInputType.name,
+                              onSaved: (value) {},
+                              decoration: InputDecoration(
+                                hintText: 'name',
+                                hintStyle: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                icon: Icon(Icons.man,
+                                    color: Colors.pinkAccent, size: 24),
+                                alignLabelWithHint: true,
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(25)),
+                            child: TextFormField(
+                              controller: age,
+                              autocorrect: true,
+                              enableSuggestions: true,
+                              keyboardType: TextInputType.number,
+                              onSaved: (value) {},
+                              decoration: InputDecoration(
+                                hintText: 'age',
+                                hintStyle: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                icon: Icon(Icons.calendar_month,
+                                    color: Colors.pinkAccent, size: 24),
+                                alignLabelWithHint: true,
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(25)),
+                            child: TextFormField(
+                              controller: bio,
+                              autocorrect: true,
+                              enableSuggestions: true,
+                              keyboardType: TextInputType.emailAddress,
+                              onSaved: (value) {},
+                              decoration: InputDecoration(
+                                hintText: 'bio',
+                                hintStyle: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                icon: Icon(Icons.gif_box,
+                                    color: Colors.pinkAccent, size: 24),
+                                alignLabelWithHint: true,
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(25)),
+                            child: TextFormField(
+                              controller: interests,
+                              autocorrect: true,
+                              enableSuggestions: true,
+                              keyboardType: TextInputType.name,
+                              onSaved: (value) {
+                                createProfile();
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'dancing,party...',
+                                hintStyle: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                icon: Icon(Icons.favorite,
+                                    color: Colors.pinkAccent, size: 24),
+                                alignLabelWithHint: true,
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(25)),
+                            child: TextFormField(
+                              controller: gender,
+                              autocorrect: true,
+                              enableSuggestions: true,
+                              keyboardType: TextInputType.name,
+                              onSaved: (value) {
+                                createProfile();
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'gender',
+                                hintStyle: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                icon: Icon(Icons.man,
+                                    color: Colors.pinkAccent, size: 24),
+                                alignLabelWithHint: true,
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(25)),
+                            child: TextFormField(
+                              controller: mobileNo,
+                              autocorrect: true,
+                              enableSuggestions: true,
+                              keyboardType: TextInputType.phone,
+                              onSaved: (value) {
+                                createProfile();
+                              },
+                              decoration: InputDecoration(
+                                hintText: '9556181283',
+                                hintStyle: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                icon: Icon(Icons.man,
+                                    color: Colors.pinkAccent, size: 24),
+                                alignLabelWithHint: true,
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                  ),
+                                  backgroundColor: Colors.pinkAccent),
+                              onPressed: () {
+                                createProfile();
+                              },
+                              child: Text(
+                                "SAVE",
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    color: Colors.white,
+                                    fontFamily: 'Source Sans Pro'),
+                              )),
+                          Card(
+                            color: Color(0xff373737),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 25.0),
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditProfile()));
+                              },
+                              leading: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                              ),
+                              title: Text(
+                                'Edit',
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    color: Colors.white,
+                                    fontFamily: 'Source Sans Pro'),
+                              ),
+                              trailing: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          Card(
+                            color: Color(0xff373737),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 25.0),
+                            child: ListTile(
+                              onTap: () {
+                                // showAlertDialog(context);
+                                auth.signOut();
+                              },
+                              leading: Icon(
+                                Icons.logout,
+                                color: Colors.white,
+                              ),
+                              title: Text(
+                                'Logout',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Source Sans Pro',
+                                  fontSize: 17.0,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ],
-                      ),
+                      )),
                     ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                          tileColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
-                          focusColor: Colors.pink.shade100,
-                          leading: Icon(
-                            Icons.man_2_rounded,
-                            color: Colors.pinkAccent,
-                          ),
-                          title: Text(
-                            'Name: ',
-                            style: GoogleFonts.aBeeZee(
-                                fontSize: 20, fontWeight: FontWeight.w500),
-                          ),
-                          trailing: Icon(
-                            Icons.edit,
-                            color: Colors.pinkAccent,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30.0),
-                                      topRight: Radius.circular(30.0),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return Padding(
-                                      padding:
-                                          MediaQuery.of(context).viewInsets,
-                                      child: Wrap(children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextFormField(
-                                              controller: name,
-                                              decoration: InputDecoration(
-                                                  hintText: "Name",
-                                                  border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20))),
-                                              keyboardType: TextInputType.name,
-                                            ),
-                                          ),
-                                        ),
-                                        Center(
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            child: Text("UPDATE"),
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20)),
-                                                backgroundColor:
-                                                    Colors.pinkAccent),
-                                          ),
-                                        )
-                                      ]),
-                                    );
-                                  });
-                            });
-                          }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
-                          tileColor: Colors.white,
-                          leading: Icon(
-                            Icons.calendar_month_rounded,
-                            color: Colors.pinkAccent,
-                          ),
-                          title: Text(
-                            'Age: ',
-                            style: GoogleFonts.aBeeZee(
-                                fontSize: 20, fontWeight: FontWeight.w500),
-                          ),
-                          trailing: Icon(
-                            Icons.edit,
-                            color: Colors.pinkAccent,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30.0),
-                                      topRight: Radius.circular(30.0),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return Padding(
-                                      padding:
-                                          MediaQuery.of(context).viewInsets,
-                                      child: Wrap(children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextFormField(
-                                              controller: age,
-                                              decoration: InputDecoration(
-                                                  hintText: "Age",
-                                                  border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20))),
-                                              keyboardType:
-                                                  TextInputType.number,
-                                            ),
-                                          ),
-                                        ),
-                                        Center(
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            child: Text("UPDATE"),
-                                            style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.pinkAccent,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20))),
-                                          ),
-                                        )
-                                      ]),
-                                    );
-                                  });
-                            });
-                          }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
-                          tileColor: Colors.white,
-                          leading: Icon(
-                            Icons.add_comment,
-                            color: Colors.pinkAccent,
-                          ),
-                          title: Text(
-                            'Bio: ',
-                            style: GoogleFonts.aBeeZee(
-                                fontSize: 20, fontWeight: FontWeight.w500),
-                          ),
-                          trailing: Icon(
-                            Icons.edit,
-                            color: Colors.pinkAccent,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30.0),
-                                      topRight: Radius.circular(30.0),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return Padding(
-                                      padding:
-                                          MediaQuery.of(context).viewInsets,
-                                      child: Wrap(children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextFormField(
-                                              controller: bio,
-                                              decoration: InputDecoration(
-                                                  hintText: "Bio",
-                                                  border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20))),
-                                              keyboardType:
-                                                  TextInputType.emailAddress,
-                                            ),
-                                          ),
-                                        ),
-                                        Center(
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            child: Text("UPDATE"),
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20)),
-                                                backgroundColor:
-                                                    Colors.pinkAccent),
-                                          ),
-                                        )
-                                      ]),
-                                    );
-                                  });
-                            });
-                          }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
-                          tileColor: Colors.white,
-                          leading: Icon(
-                            Icons.favorite,
-                            color: Colors.pinkAccent,
-                          ),
-                          title: Text(
-                            'Interests: ',
-                            style: GoogleFonts.aBeeZee(
-                                fontSize: 20, fontWeight: FontWeight.w500),
-                          ),
-                          trailing: Icon(
-                            Icons.edit,
-                            color: Colors.pinkAccent,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30.0),
-                                      topRight: Radius.circular(30.0),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return Padding(
-                                      padding:
-                                          MediaQuery.of(context).viewInsets,
-                                      child: Wrap(children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextFormField(
-                                              controller: interests,
-                                              decoration: InputDecoration(
-                                                  hintText: "Interests",
-                                                  border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20))),
-                                              keyboardType: TextInputType.name,
-                                            ),
-                                          ),
-                                        ),
-                                        Center(
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            child: Text("UPDATE"),
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20)),
-                                                backgroundColor:
-                                                    Colors.pinkAccent),
-                                          ),
-                                        )
-                                      ]),
-                                    );
-                                  });
-                            });
-                          }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
-                          tileColor: Colors.white,
-                          leading: Icon(
-                            Icons.woman_outlined,
-                            color: Colors.pinkAccent,
-                          ),
-                          title: Text(
-                            'Gender: ',
-                            style: GoogleFonts.aBeeZee(
-                                fontSize: 20, fontWeight: FontWeight.w500),
-                          ),
-                          trailing: Icon(
-                            Icons.edit,
-                            color: Colors.pinkAccent,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30.0),
-                                      topRight: Radius.circular(30.0),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return Padding(
-                                      padding:
-                                          MediaQuery.of(context).viewInsets,
-                                      child: Wrap(children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextFormField(
-                                              controller: gender,
-                                              decoration: InputDecoration(
-                                                  hintText: "Gender",
-                                                  border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20))),
-                                              keyboardType:
-                                                  TextInputType.emailAddress,
-                                            ),
-                                          ),
-                                        ),
-                                        Center(
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            child: Text("UPDATE"),
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20)),
-                                                backgroundColor:
-                                                    Colors.pinkAccent),
-                                          ),
-                                        )
-                                      ]),
-                                    );
-                                  });
-                            });
-                          }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
-                          tileColor: Colors.white,
-                          leading: Icon(
-                            Icons.phone,
-                            color: Colors.pinkAccent,
-                          ),
-                          title: Text(
-                            'Mobile: ',
-                            style: GoogleFonts.aBeeZee(
-                                fontSize: 20, fontWeight: FontWeight.w500),
-                          ),
-                          trailing: Icon(
-                            Icons.edit,
-                            color: Colors.pinkAccent,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30.0),
-                                      topRight: Radius.circular(30.0),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return Padding(
-                                      padding:
-                                          MediaQuery.of(context).viewInsets,
-                                      child: Wrap(children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextFormField(
-                                              controller: mobileNo,
-                                              decoration: InputDecoration(
-                                                  hintText: "Mobile Number",
-                                                  border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20))),
-                                              keyboardType: TextInputType.name,
-                                            ),
-                                          ),
-                                        ),
-                                        Center(
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            child: Text("UPDATE"),
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20)),
-                                                backgroundColor:
-                                                    Colors.pinkAccent),
-                                          ),
-                                        )
-                                      ]),
-                                    );
-                                  });
-                            });
-                          }),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+                  ]),
+            ))));
   }
 }
 
-Widget buildImage() {
-  return ClipOval(
-    child: Material(
-      color: Colors.transparent,
-      child: Ink.image(
-        image: AssetImage("assets/datingy.jpeg"),
-        fit: BoxFit.cover,
-        width: 140,
-        height: 140,
-        child: InkWell(onTap: () {}),
+showAlertDialog(BuildContext context) {
+  // Create button
+  Widget okButton = Row(
+    children: [
+      TextButton(
+        child: Text("Yes"),
+        onPressed: () {},
       ),
-    ),
+      TextButton(
+        child: Text("No"),
+        onPressed: () => Navigator.pop(context),
+      )
+    ],
+  );
+
+  // Create AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Logout"),
+    content: Text("Are you sure you want to Logout?"),
+    actions: [
+      okButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
   );
 }
-
-Widget buildEditIcon(Color color) => buildCircle(
-      color: Colors.white,
-      all: 3,
-      child: buildCircle(
-        color: color,
-        all: 8,
-        child: Icon(
-          isEdit ? Icons.add_a_photo : Icons.edit,
-          color: Colors.white,
-          size: 15,
-        ),
-      ),
-    );
-
-Widget buildCircle({
-  required Widget child,
-  required double all,
-  required Color color,
-}) =>
-    ClipOval(
-      child: Container(
-        padding: EdgeInsets.all(all),
-        color: color,
-        child: child,
-      ),
-    );

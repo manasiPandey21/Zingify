@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:zingify/contants/color/colors.dart';
 import 'package:zingify/screens/filter.dart';
+import 'package:zingify/screens/editprofile.dart';
 import 'package:zingify/screens/profile.dart';
 import 'package:zingify/screens/search.dart';
 
