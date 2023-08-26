@@ -7,7 +7,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 import '../config.dart';
 import '../models/userModel.dart';
 
@@ -155,7 +154,7 @@ class _EditProfileState extends State<EditProfile> {
                                         ),
                                         Center(
                                           child: ElevatedButton(
-                                             onPressed: () {
+                                            onPressed: () {
                                               Navigator.pop(context);
                                             },
                                             child: Text("UPDATE"),
@@ -579,4 +578,3 @@ Widget buildCircle({
         child: child,
       ),
     );
-    

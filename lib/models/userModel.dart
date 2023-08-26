@@ -59,7 +59,8 @@ class UserModel {
 
   String toJson() => json.encode(toMap());
 
-  factory UserModel.fromJson(String source) => UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(String source) =>
+      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -69,23 +70,22 @@ class UserModel {
   @override
   bool operator ==(covariant UserModel other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.name == name &&
-      other.age == age &&
-      other.Bio == Bio &&
-      other.interests == interests &&
-      other.gender == gender &&
-      other.mobile == mobile;
+
+    return other.name == name &&
+        other.age == age &&
+        other.Bio == Bio &&
+        other.interests == interests &&
+        other.gender == gender &&
+        other.mobile == mobile;
   }
 
   @override
   int get hashCode {
     return name.hashCode ^
-      age.hashCode ^
-      Bio.hashCode ^
-      interests.hashCode ^
-      gender.hashCode ^
-      mobile.hashCode;
+        age.hashCode ^
+        Bio.hashCode ^
+        interests.hashCode ^
+        gender.hashCode ^
+        mobile.hashCode;
   }
 }

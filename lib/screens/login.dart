@@ -55,9 +55,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: Color.fromARGB(255, 215, 71, 119),
-       
-     
+      backgroundColor: Color.fromARGB(255, 215, 71, 119),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Consumer(builder: (context, ref, _) {
@@ -119,7 +117,11 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Center(child: Image(image: AssetImage("assets/heart.png"),height: 180,)),
+                        const Center(
+                            child: Image(
+                          image: AssetImage("assets/heart.png"),
+                          height: 180,
+                        )),
                         const Spacer(flex: 1),
                         Container(
                           margin: const EdgeInsets.symmetric(
@@ -238,8 +240,8 @@ class _LoginPageState extends State<LoginPage> {
                                     padding: const EdgeInsets.all(18),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25),
-                                      side: BorderSide(
-                                          color: Colors.pinkAccent),
+                                      side:
+                                          BorderSide(color: Colors.pinkAccent),
                                     ),
                                     child: Text(
                                       type == Status.login
@@ -265,8 +267,8 @@ class _LoginPageState extends State<LoginPage> {
                                     padding: const EdgeInsets.all(18),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(25),
-                                      side: BorderSide(
-                                          color: Colors.pinkAccent),
+                                      side:
+                                          BorderSide(color: Colors.pinkAccent),
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
@@ -296,8 +298,8 @@ class _LoginPageState extends State<LoginPage> {
                                       text: type == Status.login
                                           ? 'Sign up now'
                                           : 'Log in',
-                                      style: TextStyle(
-                                          color: Colors.pinkAccent),
+                                      style:
+                                          TextStyle(color: Colors.pinkAccent),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
                                           _switchType();

@@ -11,47 +11,49 @@ import '../providers/authprovider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import '../config.dart';
 
-class Profile extends ConsumerWidget {
+class Profile extends StatefulWidget {
   Profile({super.key});
 
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   TextEditingController name = new TextEditingController();
-
   TextEditingController age = new TextEditingController();
-
   TextEditingController gender = new TextEditingController();
-
-  TextEditingController mobileNo = new TextEditingController();
-
+  TextEditingController mobile = new TextEditingController();
   TextEditingController interests = new TextEditingController();
-
   TextEditingController bio = new TextEditingController();
 
-  void createProfile() async {
-    var Editprofilebody = {
+  void createprofileUser() async {
+    var profileBody = {
       "name": name.text,
       "age": age.text,
       "bio": bio.text,
       "interests": interests.text,
       "gender": gender.text,
-      "mobile": mobileNo.text
+      "mobile": mobile.text
     };
-    
- try {
-  var response = await http.post(Uri.parse(profilecreation),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(Editprofilebody));
-  print(response);
-} catch (error) {
-  print("Error sending HTTP request: $error");
-}
 
+    try {
+      print("url" + Uri.parse(url).toString());
+      var response = await http.post(Uri.parse(registration),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(profileBody));
+      var jsonResponse = jsonDecode(response.body);
+      print(jsonResponse['status']);
+      print("response" + response.toString());
+    } catch (error) {
+      print("Error sending HTTP request: $error");
+    }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.watch(autheticationProvider);
+  Widget build(BuildContext context) {
+    //final auth = ref.watch(autheticationProvider);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
@@ -175,9 +177,7 @@ class Profile extends ConsumerWidget {
                               autocorrect: true,
                               enableSuggestions: true,
                               keyboardType: TextInputType.name,
-                              onSaved: (value) {
-                                createProfile();
-                              },
+                              onSaved: (value) {},
                               decoration: InputDecoration(
                                 hintText: 'dancing,party...',
                                 hintStyle: const TextStyle(
@@ -206,7 +206,7 @@ class Profile extends ConsumerWidget {
                               enableSuggestions: true,
                               keyboardType: TextInputType.name,
                               onSaved: (value) {
-                                createProfile();
+                                createprofileUser();
                               },
                               decoration: InputDecoration(
                                 hintText: 'gender',
@@ -231,13 +231,11 @@ class Profile extends ConsumerWidget {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(25)),
                             child: TextFormField(
-                              controller: mobileNo,
+                              controller: mobile,
                               autocorrect: true,
                               enableSuggestions: true,
                               keyboardType: TextInputType.phone,
-                              onSaved: (value) {
-                                createProfile();
-                              },
+                              onSaved: (value) {},
                               decoration: InputDecoration(
                                 hintText: '9556181283',
                                 hintStyle: const TextStyle(
@@ -259,7 +257,7 @@ class Profile extends ConsumerWidget {
                                   ),
                                   backgroundColor: Colors.pinkAccent),
                               onPressed: () {
-                                createProfile();
+                                createprofileUser();
                               },
                               child: Text(
                                 "SAVE",
@@ -309,7 +307,7 @@ class Profile extends ConsumerWidget {
                             child: ListTile(
                               onTap: () {
                                 // showAlertDialog(context);
-                                auth.signOut();
+                                //auth.signOut();
                               },
                               leading: Icon(
                                 Icons.logout,

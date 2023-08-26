@@ -47,6 +47,7 @@ dependencies:
   web_socket_channel: ^2.4.0
   http: ^0.13.6
   rflutter_alert: ^2.0.7
+  lottie: ^2.3.2
 
 dependency_overrides:
   firebase_core_platform_interface: 4.5.1  
