@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:zingify/screens/editprofile.dart';
 import '../config.dart';
 import '../providers/authprovider.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 import '../config.dart';
 
 class Profile extends StatefulWidget {
@@ -39,8 +38,10 @@ class _ProfileState extends State<Profile> {
     };
 
     try {
-      print("url" + Uri.parse(url).toString());
-      var response = await http.post(Uri.parse(registration),
+      print("profilebody" + profileBody.toString());
+      print("url" + Uri.parse(registration).toString());
+      final url = Uri.parse(registration);
+      final http.Response response = await http.post(url,
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(profileBody));
       var jsonResponse = jsonDecode(response.body);

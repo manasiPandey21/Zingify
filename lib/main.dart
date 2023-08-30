@@ -25,9 +25,9 @@ class MyApp extends ConsumerWidget {
         debugShowCheckedModeBanner: false,
         home: initialize.when(
           data: (data) {
-            //  return AuthChecker();
-            // return Profile();
-            return LoadingScreen();
+             return AuthChecker();
+             //return Profile();
+            //return LoadingScreen();
           },
           error: (error, stackTrace) => ErrorScreen(error, stackTrace),
           loading: () => LoadingScreen(),

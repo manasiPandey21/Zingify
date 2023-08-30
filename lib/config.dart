@@ -1,4 +1,7 @@
- final url = 'http://192.168.1.2:2500/';
+//final url = 'http://localhost:2500/';
 // final profilecreation = url.trim() + "create-profile";
-//final url = 'http://192.168.1.2:2500/createprofile';
-final registration = url + "registration";
+import 'dart:io';
+
+final url = Platform.isAndroid ? 'http://192.168.1.8:2500/' : 'http://localhost:2500/';
+final registration = url + "createprofile";
+final getDetails = url + "getDetails";
