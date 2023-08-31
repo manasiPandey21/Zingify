@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zingify/providers/authprovider.dart';
+import 'package:zingify/screens/profile.dart';
 
 enum Status {
   login,
@@ -88,6 +89,12 @@ class _LoginPageState extends State<LoginPage> {
                             if (event == null) {
                               loading();
                               return;
+                            } else {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Profile()),
+                              );
                             }
                           }));
             }

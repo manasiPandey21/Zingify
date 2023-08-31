@@ -26,7 +26,7 @@ class MyApp extends ConsumerWidget {
         home: initialize.when(
           data: (data) {
              return AuthChecker();
-             //return Profile();
+            //  return Profile();
             //return LoadingScreen();
           },
           error: (error, stackTrace) => ErrorScreen(error, stackTrace),

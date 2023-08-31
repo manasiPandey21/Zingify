@@ -1,60 +1,63 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:zingify/models/authModel.dart';
 import 'package:zingify/screens/editprofile.dart';
 import '../config.dart';
 import '../providers/authprovider.dart';
 import '../config.dart';
 
-class Profile extends StatefulWidget {
-  Profile({super.key});
-
-  @override
-  State<Profile> createState() => _ProfileState();
-}
-
-class _ProfileState extends State<Profile> {
+class Profile extends ConsumerWidget {
   final GlobalKey<FormState> _formKey = GlobalKey();
-
-  TextEditingController name = new TextEditingController();
-  TextEditingController age = new TextEditingController();
-  TextEditingController gender = new TextEditingController();
-  TextEditingController mobile = new TextEditingController();
-  TextEditingController interests = new TextEditingController();
-  TextEditingController bio = new TextEditingController();
-
-  void createprofileUser() async {
-    var profileBody = {
+  final TextEditingController name = TextEditingController();
+  final TextEditingController age = TextEditingController();
+  final TextEditingController gender = TextEditingController();
+  final TextEditingController mobile = TextEditingController();
+  final TextEditingController interests = TextEditingController();
+  final TextEditingController bio = TextEditingController();
+  final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
+    return FirebaseAuth.instance;
+  });
+  Future<void> createProfileUser(String idToken) async {
+    final profileBody = {
+      "fid": idToken,
       "name": name.text,
       "age": age.text,
       "bio": bio.text,
       "interests": interests.text,
       "gender": gender.text,
-      "mobile": mobile.text
+      "mobile": mobile.text,
     };
 
     try {
-      print("profilebody" + profileBody.toString());
-      print("url" + Uri.parse(registration).toString());
       final url = Uri.parse(registration);
-      final http.Response response = await http.post(url,
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode(profileBody));
-      var jsonResponse = jsonDecode(response.body);
+      final http.Response response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(profileBody),
+      );
+      final jsonResponse = jsonDecode(response.body);
       print(jsonResponse['status']);
-      print("response" + response.toString());
+      print("response: ${response.toString()}");
     } catch (error) {
       print("Error sending HTTP request: $error");
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    //final auth = ref.watch(autheticationProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final firebaseAuth = ref.watch(firebaseAuthProvider);
+    final user = firebaseAuth.currentUser;
+    if (user == null) {
+      print("User is not authenticated.");
+      return Scaffold(body: Center(child: Text("User not authenticated.")));
+    }
+
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
@@ -206,9 +209,7 @@ class _ProfileState extends State<Profile> {
                               autocorrect: true,
                               enableSuggestions: true,
                               keyboardType: TextInputType.name,
-                              onSaved: (value) {
-                                createprofileUser();
-                              },
+                              onSaved: (value) {},
                               decoration: InputDecoration(
                                 hintText: 'gender',
                                 hintStyle: const TextStyle(
@@ -257,8 +258,18 @@ class _ProfileState extends State<Profile> {
                                     borderRadius: BorderRadius.circular(25.0),
                                   ),
                                   backgroundColor: Colors.pinkAccent),
-                              onPressed: () {
-                                createprofileUser();
+                              onPressed: () async {
+                                final firebaseAuth =
+                                    ref.read(firebaseAuthProvider);
+                                final user = firebaseAuth.currentUser;
+
+                                if (user != null) {
+                                  String? idToken =user.uid;
+                                 
+                                  createProfileUser(idToken!);
+                                } else {
+                                  print("error occurred");
+                                }
                               },
                               child: Text(
                                 "SAVE",
