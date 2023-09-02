@@ -7,15 +7,18 @@ import 'package:zingify/screens/interests.dart';
 import 'package:zingify/screens/loading.dart';
 import 'package:zingify/screens/editprofile.dart';
 import 'package:zingify/screens/profile.dart';
-
+import 'package:appcheck/appcheck.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(ProviderScope(child: MyApp()));
+  
 }
 
 final firebaseInitializerProvider = FutureProvider<FirebaseApp>((ref) async {
   return await Firebase.initializeApp();
+  
 });
+
 
 class MyApp extends ConsumerWidget {
   @override
@@ -26,7 +29,7 @@ class MyApp extends ConsumerWidget {
         home: initialize.when(
           data: (data) {
              return AuthChecker();
-            //  return Profile();
+             //return Profile();
             //return LoadingScreen();
           },
           error: (error, stackTrace) => ErrorScreen(error, stackTrace),

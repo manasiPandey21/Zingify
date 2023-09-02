@@ -1,28 +1,69 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:zingify/models/authModel.dart';
 import 'package:zingify/screens/editprofile.dart';
+import 'package:zingify/screens/homePage.dart';
 import '../config.dart';
 import '../providers/authprovider.dart';
 import '../config.dart';
 
-class Profile extends ConsumerWidget {
+class Profile extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends ConsumerState<Profile> {
+  final picker = ImagePicker();
+
+  String? uid;
+  var _image;
+  var imageUrl;
+  var imagePicker;
+  final _firebaseStorage = FirebaseStorage.instance;
+
   final GlobalKey<FormState> _formKey = GlobalKey();
+
   final TextEditingController name = TextEditingController();
   final TextEditingController age = TextEditingController();
   final TextEditingController gender = TextEditingController();
   final TextEditingController mobile = TextEditingController();
   final TextEditingController interests = TextEditingController();
   final TextEditingController bio = TextEditingController();
+
   final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
     return FirebaseAuth.instance;
   });
+  
+  Future getImageFromGallery() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
+
+  //Image Picker function to get image from camera
+  Future getImageFromCamera() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
+
   Future<void> createProfileUser(String idToken) async {
     final profileBody = {
       "fid": idToken,
@@ -50,7 +91,7 @@ class Profile extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context,Widget Ref) {
     final firebaseAuth = ref.watch(firebaseAuthProvider);
     final user = firebaseAuth.currentUser;
     if (user == null) {
@@ -71,10 +112,11 @@ class Profile extends ConsumerWidget {
                       height: 40.0,
                       width: 150.0,
                     ),
-                    CircleAvatar(
-                      radius: 60.0,
-                      backgroundImage: AssetImage('assets/dating.png'),
-                    ),
+                    // CircleAvatar(
+                    //   radius: 60.0,
+                    //   backgroundImage: AssetImage('assets/dating.png'),
+                    // ),
+                    ProfileImage(),
                     SizedBox(
                       height: 20.0,
                       width: 150.0,
@@ -264,12 +306,31 @@ class Profile extends ConsumerWidget {
                                 final user = firebaseAuth.currentUser;
 
                                 if (user != null) {
-                                  String? idToken =user.uid;
-                                 
+                                  String? idToken = user.uid;
+
                                   createProfileUser(idToken!);
                                 } else {
                                   print("error occurred");
                                 }
+                                if (_image != null) {
+                                  String? idToken = user!.uid;
+                                  var snapshot = await _firebaseStorage
+                                      .ref()
+                                      .child('UserPhotos/$idToken')
+                                      .putFile(_image);
+                                  var downloadUrl =
+                                      await snapshot.ref.getDownloadURL();
+                                  if (mounted) {
+                                    setState(() {
+                                      imageUrl = downloadUrl;
+                                    });
+                                  }
+                                }
+
+                                Navigator.pushAndRemoveUntil(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return HomePage();
+                                }), (route) => false);
                               },
                               child: Text(
                                 "SAVE",
@@ -345,37 +406,108 @@ class Profile extends ConsumerWidget {
                   ]),
             ))));
   }
-}
 
-showAlertDialog(BuildContext context) {
-  // Create button
-  Widget okButton = Row(
-    children: [
-      TextButton(
-        child: Text("Yes"),
-        onPressed: () {},
+  Widget ProfileImage() {
+    return Center(
+      child: Stack(
+        children: <Widget>[
+          CircleAvatar(
+            radius: 80,
+            backgroundImage: _image != null
+                ? FileImage(File(_image!.path))
+                : AssetImage("assets/dating.png") as ImageProvider,
+          ),
+          Positioned(
+            bottom: 20,
+            right: 40,
+            child: InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                    context: context, builder: ((builder) => BottomSheet()));
+              },
+              child: Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          )
+        ],
       ),
-      TextButton(
-        child: Text("No"),
-        onPressed: () => Navigator.pop(context),
-      )
-    ],
-  );
+    );
+  }
 
-  // Create AlertDialog
-  AlertDialog alert = AlertDialog(
-    title: Text("Logout"),
-    content: Text("Are you sure you want to Logout?"),
-    actions: [
-      okButton,
-    ],
-  );
+  showAlertDialog(BuildContext context) {
+    // Create button
+    Widget okButton = Row(
+      children: [
+        TextButton(
+          child: Text("Yes"),
+          onPressed: () {},
+        ),
+        TextButton(
+          child: Text("No"),
+          onPressed: () => Navigator.pop(context),
+        )
+      ],
+    );
 
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Logout"),
+      content: Text("Are you sure you want to Logout?"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Widget BottomSheet() {
+    return Container(
+      height: 100,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(children: [
+        Text(
+          "Choose Profile Photo",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.pinkAccent),
+                onPressed: () {
+                  getImageFromCamera();
+                },
+                icon: Icon(Icons.camera_alt),
+                label: Text("Camera")),
+            SizedBox(
+              width: 70,
+            ),
+            ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.pinkAccent),
+                onPressed: () {
+                  getImageFromGallery();
+                },
+                icon: Icon(Icons.image),
+                label: Text("Gallary")),
+          ],
+        )
+      ]),
+    );
+  }
 }
