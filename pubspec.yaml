@@ -46,7 +46,9 @@ dependencies:
   firebase_storage: ^11.2.6
   image_picker: ^1.0.4
   appcheck: ^1.0.6
-  
+  horizontal_picker: ^1.2.0
+  flutter_spinkit: ^5.1.0
+  syncfusion_flutter_sliders: ^22.2.11
 
 dev_dependencies:
   flutter_test:

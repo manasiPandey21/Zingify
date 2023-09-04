@@ -17,13 +17,41 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  List _screens = [Profile(), Search(), HomePage(), Filter()];
-
-  void _updateIndex(int value) {
+ 
+    void onItemTapped(int index) {
     setState(() {
-      _currentIndex = value;
+      _currentIndex = index;
     });
+    if (index == 0) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Profile()));
+    }
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Search(),
+        ),
+      );
+    }
+     if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+    }
+     if (index == 3) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Filter(),
+        ),
+      );
+    }
   }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +91,7 @@ class _HomePageState extends State<HomePage> {
         bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             currentIndex: _currentIndex,
-            onTap: _updateIndex,
+            onTap: onItemTapped,
             selectedItemColor: zingifyColor,
             selectedFontSize: 18,
             unselectedFontSize: 13,
