@@ -64,7 +64,6 @@ class _EditProfileState extends State<EditProfile> {
             child: Card(
               color: Color.fromARGB(255, 238, 227, 231),
               elevation: 10,
-              //shape:Border.all(color: Colors.pinkAccent),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
               shadowColor: Colors.grey,
@@ -76,9 +75,6 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Text(
                       "Hey! It's Me",
-
-                      // style: GoogleFonts.aboreto(
-                      //     fontSize: 50, fontWeight: FontWeight.bold),
                       style: GoogleFonts.aBeeZee(
                           fontSize: 50, fontWeight: FontWeight.w500),
                     ),

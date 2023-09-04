@@ -16,15 +16,11 @@ import '../config.dart';
 import '../providers/authprovider.dart';
 import '../config.dart';
 
-class Profile extends ConsumerStatefulWidget {
-  @override
-  ConsumerState<Profile> createState() => _ProfileState();
-}
 
-class _ProfileState extends ConsumerState<Profile> {
+class Profile extends ConsumerWidget {
+   Profile({super.key});
   final picker = ImagePicker();
-
-  String? uid;
+ String? uid;
   var _image;
   var imageUrl;
   var imagePicker;
@@ -46,22 +42,22 @@ class _ProfileState extends ConsumerState<Profile> {
   Future getImageFromGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    setState(() {
+    
       if (pickedFile != null) {
         _image = File(pickedFile.path);
-      }
-    });
+      
+    }
   }
 
   //Image Picker function to get image from camera
   Future getImageFromCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
-    setState(() {
+   
       if (pickedFile != null) {
         _image = File(pickedFile.path);
       }
-    });
+   
   }
 
   Future<void> createProfileUser(String idToken) async {
@@ -89,17 +85,15 @@ class _ProfileState extends ConsumerState<Profile> {
       print("Error sending HTTP request: $error");
     }
   }
-
   @override
-  Widget build(BuildContext context,Widget Ref) {
+  Widget build(BuildContext context,WidgetRef ref) {
     final firebaseAuth = ref.watch(firebaseAuthProvider);
     final user = firebaseAuth.currentUser;
     if (user == null) {
       print("User is not authenticated.");
       return Scaffold(body: Center(child: Text("User not authenticated.")));
     }
-
-    return MaterialApp(
+     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
             backgroundColor: Color(0xff212121),
@@ -116,7 +110,7 @@ class _ProfileState extends ConsumerState<Profile> {
                     //   radius: 60.0,
                     //   backgroundImage: AssetImage('assets/dating.png'),
                     // ),
-                    ProfileImage(),
+                    ProfileImage(context),
                     SizedBox(
                       height: 20.0,
                       width: 150.0,
@@ -320,12 +314,12 @@ class _ProfileState extends ConsumerState<Profile> {
                                       .putFile(_image);
                                   var downloadUrl =
                                       await snapshot.ref.getDownloadURL();
-                                  if (mounted) {
-                                    setState(() {
+                                
+                                    
                                       imageUrl = downloadUrl;
-                                    });
+                                    
                                   }
-                                }
+                                
 
                                 Navigator.pushAndRemoveUntil(context,
                                     MaterialPageRoute(builder: (context) {
@@ -407,7 +401,7 @@ class _ProfileState extends ConsumerState<Profile> {
             ))));
   }
 
-  Widget ProfileImage() {
+  Widget ProfileImage(BuildContext context) {
     return Center(
       child: Stack(
         children: <Widget>[
@@ -423,7 +417,7 @@ class _ProfileState extends ConsumerState<Profile> {
             child: InkWell(
               onTap: () {
                 showModalBottomSheet(
-                    context: context, builder: ((builder) => BottomSheet()));
+                    context: context, builder: ((builder) => BottomSheet(context)));
               },
               child: Icon(
                 Icons.camera_alt,
@@ -470,7 +464,7 @@ class _ProfileState extends ConsumerState<Profile> {
     );
   }
 
-  Widget BottomSheet() {
+  Widget BottomSheet(BuildContext context){
     return Container(
       height: 100,
       width: MediaQuery.of(context).size.width,
