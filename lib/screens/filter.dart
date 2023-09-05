@@ -212,7 +212,7 @@ class _FilterState extends State<Filter> {
                     ),
                   ),
                   SfSlider(
-                    min: 18,
+                    min: 1,
                     max: 100,
                     value: _value5,
                     interval: 10,
