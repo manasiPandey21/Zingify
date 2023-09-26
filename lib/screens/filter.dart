@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:zingify/screens/homePage.dart';
 
 class Filter extends StatefulWidget {
   const Filter({super.key});
@@ -24,7 +25,7 @@ class _FilterState extends State<Filter> {
         backgroundColor: const Color.fromARGB(255, 248, 67, 127),
         title: Center(
           child: Text(
-            "FILTER",
+            "Filter",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
@@ -34,7 +35,6 @@ class _FilterState extends State<Filter> {
           SizedBox(
             height: 50,
           ),
-          
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -232,11 +232,13 @@ class _FilterState extends State<Filter> {
               ),
             ),
           ),
-         
           ElevatedButton(
               style: ElevatedButton.styleFrom(
                   backgroundColor: Color.fromARGB(255, 224, 67, 120)),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomePage()));
+              },
               child: Text(
                 "DONE",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),

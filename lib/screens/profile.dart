@@ -12,15 +12,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:zingify/models/authModel.dart';
 import 'package:zingify/screens/editprofile.dart';
 import 'package:zingify/screens/homePage.dart';
+import 'package:zingify/screens/interests.dart';
 import '../config.dart';
 import '../providers/authprovider.dart';
 import '../config.dart';
 
-
 class Profile extends ConsumerWidget {
-   Profile({super.key});
+  Profile({super.key});
   final picker = ImagePicker();
- String? uid;
+  String? uid;
   var _image;
   var imageUrl;
   var imagePicker;
@@ -38,14 +38,12 @@ class Profile extends ConsumerWidget {
   final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
     return FirebaseAuth.instance;
   });
-  
+
   Future getImageFromGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
     }
   }
 
@@ -53,11 +51,9 @@ class Profile extends ConsumerWidget {
   Future getImageFromCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
-   
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      }
-   
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+    }
   }
 
   Future<void> createProfileUser(String idToken) async {
@@ -85,18 +81,41 @@ class Profile extends ConsumerWidget {
       print("Error sending HTTP request: $error");
     }
   }
+
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final firebaseAuth = ref.watch(firebaseAuthProvider);
     final user = firebaseAuth.currentUser;
     if (user == null) {
       print("User is not authenticated.");
       return Scaffold(body: Center(child: Text("User not authenticated.")));
     }
-     return MaterialApp(
+    final userProfileProvider =
+        FutureProvider<Map<String, dynamic>>((ref) async {
+      final firebaseAuth = ref.watch(firebaseAuthProvider);
+      final user = firebaseAuth.currentUser;
+
+      if (user != null) {
+        final url = Uri.parse('http://192.168.1.7:2500/getDetails/${user.uid}');
+        final response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          return jsonDecode(response.body);
+        }
+      }
+
+      throw Exception("Failed to fetch user profile data");
+    });
+    final userProfileAsyncValue = ref.watch(userProfileProvider);
+    print("userProfile");
+    // userProfileAsyncValue.forEach((k,v)=>{
+    //   print(k+"   "+v)
+    // });
+
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-            backgroundColor: Color(0xff212121),
+            backgroundColor: Color.fromARGB(255, 238, 227, 231),
             body: SafeArea(
                 child: SingleChildScrollView(
               child: Column(
@@ -295,6 +314,27 @@ class Profile extends ConsumerWidget {
                                   ),
                                   backgroundColor: Colors.pinkAccent),
                               onPressed: () async {
+                                userProfileAsyncValue.when(
+                                  data: (userProfileData) {
+                                    if (userProfileData != null) {
+                                      // Use userProfileData to populate fields or perform other actions
+                                      name.text = userProfileData['name'];
+                                      age.text = userProfileData['age'];
+                                      bio.text = userProfileData['bio'];
+                                      interests.text =
+                                          userProfileData['interests'];
+                                      gender.text = userProfileData['gender'];
+                                      mobile.text = userProfileData['mobile'];
+                                    }
+                                  },
+                                  loading: () {
+                                    // Handle loading state if needed
+                                  },
+                                  error: (error, stackTrace) {
+                                    // Handle error state if needed
+                                  },
+                                );
+
                                 final firebaseAuth =
                                     ref.read(firebaseAuthProvider);
                                 final user = firebaseAuth.currentUser;
@@ -314,12 +354,9 @@ class Profile extends ConsumerWidget {
                                       .putFile(_image);
                                   var downloadUrl =
                                       await snapshot.ref.getDownloadURL();
-                                
-                                    
-                                      imageUrl = downloadUrl;
-                                    
-                                  }
-                                
+
+                                  imageUrl = downloadUrl;
+                                }
 
                                 Navigator.pushAndRemoveUntil(context,
                                     MaterialPageRoute(builder: (context) {
@@ -353,6 +390,38 @@ class Profile extends ConsumerWidget {
                               ),
                               title: Text(
                                 'Edit',
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    color: Colors.white,
+                                    fontFamily: 'Source Sans Pro'),
+                              ),
+                              trailing: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          Card(
+                            color: Color(0xff373737),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 25.0),
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            HobbySelectionWidget()));
+                              },
+                              leading: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                              ),
+                              title: Text(
+                                'Interests',
                                 style: TextStyle(
                                     fontSize: 17.0,
                                     color: Colors.white,
@@ -417,7 +486,8 @@ class Profile extends ConsumerWidget {
             child: InkWell(
               onTap: () {
                 showModalBottomSheet(
-                    context: context, builder: ((builder) => BottomSheet(context)));
+                    context: context,
+                    builder: ((builder) => BottomSheet(context)));
               },
               child: Icon(
                 Icons.camera_alt,
@@ -464,7 +534,7 @@ class Profile extends ConsumerWidget {
     );
   }
 
-  Widget BottomSheet(BuildContext context){
+  Widget BottomSheet(BuildContext context) {
     return Container(
       height: 100,
       width: MediaQuery.of(context).size.width,

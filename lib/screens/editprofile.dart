@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../config.dart';
 import '../models/userModel.dart';
@@ -31,26 +34,57 @@ class _EditProfileState extends State<EditProfile> {
   UserModel? newUser;
   bool _isInit = true;
   bool isLoading = true;
+  final picker = ImagePicker();
+  String? uid;
   var _image;
   var imageUrl;
   var imagePicker;
+  final _firebaseStorage = FirebaseStorage.instance;
   //final _firebaseStorage = FirebaseStorage.instance;
   List<String> genderOptions = ['Men', 'Women', 'Others'];
   String selectedGender = 'Men';
+  Future getImageFromGallery() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-  // void createProfileUser() async {
-  //   var Editprofilebody = {
-  //     "name": name,
-  //     "age": age,
-  //     "bio": bio,
-  //     "interests": interests,
-  //     "gender": gender,
-  //     "mobile": mobileNo
-  //   };
-  //   var response = await http.post(Uri.parse(profilecreation),
-  //       headers: {"Content-Type": "application/json"},
-  //       body: jsonEncode(Editprofilebody));
-  // }
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+    }
+  }
+
+  //Image Picker function to get image from camera
+  Future getImageFromCamera() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+    }
+  }
+
+  Future<void> updateUserProfile(
+      String userId, Map<String, dynamic> updatedData) async {
+    final url = Uri.parse('http://192.168.200.146/update/$userId');
+
+    try {
+      final response = await http.patch(
+        url,
+        body: updatedData,
+        headers: {
+          'Content-Type': 'application/json', // Set the content type
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Profile updated successfully
+        print('Profile updated successfully');
+      } else {
+        // Handle errors or show an error message to the user
+        print('Failed to update profile: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network or other errors
+      print('Error updating profile: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,18 +115,7 @@ class _EditProfileState extends State<EditProfile> {
                     SizedBox(
                       height: 20,
                     ),
-                    Center(
-                      child: Stack(
-                        children: [
-                          buildImage(),
-                          Positioned(
-                            bottom: 0,
-                            right: 4,
-                            child: buildEditIcon(Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
+                    ProfileImage(context),
                     SizedBox(
                       height: 50,
                     ),
@@ -522,6 +545,14 @@ class _EditProfileState extends State<EditProfile> {
                             });
                           }),
                     ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text("Submit"),
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          backgroundColor: Colors.pinkAccent),
+                    ),
                   ],
                 ),
               ),
@@ -531,46 +562,76 @@ class _EditProfileState extends State<EditProfile> {
       ),
     );
   }
-}
 
-Widget buildImage() {
-  return ClipOval(
-    child: Material(
-      color: Colors.transparent,
-      child: Ink.image(
-        image: AssetImage("assets/datingy.jpeg"),
-        fit: BoxFit.cover,
-        width: 140,
-        height: 140,
-        child: InkWell(onTap: () {}),
-      ),
-    ),
-  );
-}
-
-Widget buildEditIcon(Color color) => buildCircle(
-      color: Colors.white,
-      all: 3,
-      child: buildCircle(
-        color: color,
-        all: 8,
-        child: Icon(
-          isEdit ? Icons.add_a_photo : Icons.edit,
-          color: Colors.white,
-          size: 15,
+  Widget BottomSheet(BuildContext context) {
+    return Container(
+      height: 100,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(children: [
+        Text(
+          "Choose Profile Photo",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-      ),
+        SizedBox(
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.pinkAccent),
+                onPressed: () {
+                  getImageFromCamera();
+                },
+                icon: Icon(Icons.camera_alt),
+                label: Text("Camera")),
+            SizedBox(
+              width: 70,
+            ),
+            ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.pinkAccent),
+                onPressed: () {
+                  getImageFromGallery();
+                },
+                icon: Icon(Icons.image),
+                label: Text("Gallary")),
+          ],
+        )
+      ]),
     );
+  }
 
-Widget buildCircle({
-  required Widget child,
-  required double all,
-  required Color color,
-}) =>
-    ClipOval(
-      child: Container(
-        padding: EdgeInsets.all(all),
-        color: color,
-        child: child,
+  Widget ProfileImage(BuildContext context) {
+    return Center(
+      child: Stack(
+        children: <Widget>[
+          CircleAvatar(
+            radius: 80,
+            backgroundImage: _image != null
+                ? FileImage(File(_image!.path))
+                : AssetImage("assets/dating.png") as ImageProvider,
+          ),
+          Positioned(
+            bottom: 20,
+            right: 40,
+            child: InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: ((builder) => BottomSheet(context)));
+              },
+              child: Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          )
+        ],
       ),
     );
+  }
+}

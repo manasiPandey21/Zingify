@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zingify/screens/homePage.dart';
 
 const kActiveColor = Colors.black; // Define your active color here
 
@@ -115,6 +116,34 @@ class _HobbySelectionWidgetState extends State<HobbySelectionWidget> {
                     );
                   },
                 ).toList(),
+              ),
+              Card(
+                color: Color(0xff373737),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                child: ListTile(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomePage()));
+                  },
+                  leading: Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
+                  title: Text(
+                    'SAVE',
+                    style: TextStyle(
+                        fontSize: 17.0,
+                        color: Colors.white,
+                        fontFamily: 'Source Sans Pro'),
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ],
           ),

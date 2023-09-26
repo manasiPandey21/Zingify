@@ -84,19 +84,18 @@ class _LoginPageState extends State<LoginPage> {
               await auth
                   .signUpWithEmailAndPassword(
                       _email.text, _password.text, context)
-                  .whenComplete(
-                      () => auth.authStateChange.listen((event) async {
-                            if (event == null) {
-                              loading();
-                              return;
-                            } else {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Profile()),
-                              );
-                            }
-                          }));
+                  .whenComplete(() =>
+                      auth.authStateChange.listen((event) async {
+                        if (event == null) {
+                          loading();
+                          return;
+                        } else {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => Profile()),
+                          );
+                        }
+                      }));
             }
           }
 

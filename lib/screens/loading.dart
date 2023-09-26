@@ -6,12 +6,12 @@ class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
   @override
-   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Container(
       color: Colors.brown[100],
       child: Center(
         child: SpinKitChasingDots(
-          color: Colors.brown,
+          color: const Color.fromARGB(255, 228, 118, 155),
           size: 50,
         ),
       ),
